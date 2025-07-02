@@ -13,10 +13,10 @@ function LoginForm() {
 
   const acessar = () => {
     axios
-      .post("http://localhost:8080/financiencia/login", { email, senha })
+      .post("http://localhost:8080/usuario/login", { email, senha })
       .then((response) => {
         if (response.status === 200) {
-          navigate('./components/privatepage/');
+          <button className="nav-link" onClick={() => navigate("/private")}></button>
         }
       })
       .catch((error) => {
@@ -30,7 +30,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="container text-center">
+    <div id= "body-login" className="container text-center">
       <h1 className="title">FinanCiência</h1>
       <div className="login-box">
         <h2 className="login-title">Login</h2>
