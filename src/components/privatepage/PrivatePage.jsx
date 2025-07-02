@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function Home() {
+function PrivatePage() {
   const [projetos, setProjetos] = useState([]);
   const [busca, setBusca] = useState("");
   const [projetoSelecionado, setProjetoSelecionado] = useState(null);
@@ -86,4 +86,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default PrivatePage;
