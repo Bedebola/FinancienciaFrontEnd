@@ -57,7 +57,7 @@ function Home() {
   };
 
   return (
-    <div className="home-wrapper">
+    <div id="body-home" className="home-wrapper">
       <Header
         busca={busca}
         setBusca={setBusca}

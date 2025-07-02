@@ -1,29 +1,20 @@
 import React, { useState } from "react";
-import axios from "axios";
+import DialogMensagem from './DialogMensagem';
 
 function DialogApoiador({ onFechar, onEnviar, idProjeto }) {
   const [email, setEmail] = useState("");
+  const [mostrarDialogApoiador, setMostrarDialogApoiador] = useState(false);
+  const [mostrarDialogMensagem, setMostrarDialogMensagem] = useState(false);
+  
+  
 
   const enviar = () => {
-    if (!email) return;
-  
-    axios.post("http://localhost:8080/apoiar", {
-      idProjeto,
-      email
-    })
-    .then(() => {
-      onEnviar();
-    })
-    .catch((error) => {
-      if (error.response) {
-        alert("Erro ao apoiar projeto.");
-      } else {
-        alert("Erro na requisição.");
-      }
-    });
-  };
+    setMostrarDialogApoiador(false);
+    setMostrarDialogMensagem(true);
+    }
 
   return (
+    <div>
     <dialog open id="dialogFormApoiador">
       <section>
         <h2>Por gentileza, informe seu e-mail:</h2>
@@ -39,6 +30,12 @@ function DialogApoiador({ onFechar, onEnviar, idProjeto }) {
         </menu>
       </section>
     </dialog>
+    {mostrarDialogMensagem && (
+        <DialogMensagem
+          onFechar={() => setMostrarDialogMensagem(false)}
+        />
+      )}
+    </div>
   );
 }
 
