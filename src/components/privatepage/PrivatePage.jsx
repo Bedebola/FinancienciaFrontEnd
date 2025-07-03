@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import HeaderPrivatePage from "./HeaderPrivatePage";
 
 function PrivatePage() {
   const [projetos, setProjetos] = useState([]);
@@ -52,7 +53,6 @@ function PrivatePage() {
   };
 
   return (
-
     <div className="home-wrapper">
       <Header
         busca={busca}

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-function Header({ busca, setBusca, buscarProjeto }) {
+function HeaderPrivatePage({ busca, setBusca, buscarProjeto }) {
   const navigate = useNavigate();
 
   return (
@@ -28,4 +28,4 @@ function Header({ busca, setBusca, buscarProjeto }) {
   );
 }
 
-export default Header;
+export default HeaderPrivatePage;
