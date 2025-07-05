@@ -1,182 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import axiosComToken from "../../services/axiosinstance";
 
-function DialogProjetoPrivate({ projeto, onFechar, onSalvo }) {
-  const [form, setForm] = useState({
-    tituloProjeto: "",
-    descricaoProjeto: "",
-    alunos: "",
-    email: "",
-    universidadeId: null,
-    cidadeId: null,
-  });
-
-  const [universidades, setUniversidades] = useState([]);
-  const [cidades, setCidades] = useState([]);
-
-  const axiosBase = axios.create({
-    baseURL: "http://localhost:8080",
-  });
+export default function DialogProjetoPrivate({ projeto, onFechar, onSalvo }) {
+  const [form, setForm] = useState({});
+  const [listUni, setListUni] = useState([]);
+  const [listCid, setListCid] = useState([]);
+  const refDialog = useRef();
+  const apiBase = axios.create({ baseURL:"http://localhost:8080" });
 
   useEffect(() => {
     if (projeto) {
       setForm({
-        id: projeto.id || null,
+        id: projeto.id,
         tituloProjeto: projeto.tituloProjeto || "",
         descricaoProjeto: projeto.descricaoProjeto || "",
         alunos: projeto.alunos || "",
         email: projeto.email || "",
-        universidadeId: projeto.universidade?.id ?? null,
-        cidadeId: projeto.cidade?.id ?? null,
+        universidadeId: projeto.universidade?.id || "",
+        cidadeId: projeto.cidade?.id || ""
       });
+      refDialog.current?.showModal();
+      document.body.style.overflow = "hidden";
+      apiBase.get("/universidades/listar").then(r=>setListUni(r.data));
+      apiBase.get("/cidades/listar").then(r=>setListCid(r.data));
+    } else {
+      refDialog.current?.close();
+      document.body.style.overflow = "auto";
     }
-
-    carregarUniversidadesECidades();
   }, [projeto]);
 
-  const carregarUniversidadesECidades = () => {
-    axiosBase.get("/universidades/listar")
-      .then((res) => setUniversidades(res.data))
-      .catch((err) => console.error("Erro ao carregar universidades:", err));
+  const change = (f,v)=> setForm({...form,[f]:v});
 
-    axiosBase.get("/cidades/listar")
-      .then((res) => setCidades(res.data))
-      .catch((err) => console.error("Erro ao carregar cidades:", err));
-  };
-
-  const handleChange = (campo, valor) => {
-    setForm((prev) => ({ ...prev, [campo]: valor }));
-  };
-
-  const handleSalvar = () => {
-    const {
-      id,
-      tituloProjeto,
-      descricaoProjeto,
-      alunos,
-      email,
-      universidadeId,
-      cidadeId
-    } = form;
-
-    if (
-      !tituloProjeto ||
-      !descricaoProjeto ||
-      !alunos ||
-      !email ||
-      !universidadeId ||
-      !cidadeId
-    ) {
-      alert("Preencha todos os campos obrigatórios.");
-      return;
+  const salvar = () => {
+    const { tituloProjeto, descricaoProjeto, alunos, email, universidadeId, cidadeId } = form;
+    if (!tituloProjeto||!descricaoProjeto||!alunos||!email||!universidadeId||!cidadeId){
+      alert("Preencha todos os campos."); return;
     }
-
-    const payload = {
-      tituloProjeto,
-      descricaoProjeto,
-      alunos,
-      email,
-      universidade: { id: Number(universidadeId) },
-      cidade: { id: Number(cidadeId) }
+    const payload = { tituloProjeto, descricaoProjeto, alunos, email,
+      universidade:{ id: Number(universidadeId) },
+      cidade:{ id: Number(cidadeId) }
     };
-
-    const metodo = id ? "put" : "post";
-    const url = id ? `/projeto/editar/${id}` : "/projeto/novo";
-
-    axiosComToken[metodo](url, payload)
-      .then(() => {
-        onSalvo();
-        onFechar();
-      })
-      .catch((err) => {
-        console.error("Erro ao salvar projeto:", err);
-        alert("Erro ao salvar projeto.");
-      });
+    const id = form.id;
+    axiosComToken[id ? "put" : "post"](id ? `/projeto/editar/${id}` : "/projeto/novo", payload)
+      .then(()=> onSalvo());
   };
 
-  if (!form) return null;
-
-  return (
-    <dialog open>
-      <form method="dialog">
+  return projeto ? (
+    <dialog ref={refDialog} className="dialog-centralizado" onCancel={onFechar}>
+      <form>
         <section>
-          <h2>{form.id ? "Editar Projeto" : "Novo Projeto"}</h2>
-
-          <div className="input-container">
-            <label>Título do Projeto:</label>
-            <input
-              type="text"
-              value={form.tituloProjeto}
-              onChange={(e) => handleChange("tituloProjeto", e.target.value)}
-            />
-          </div>
-
-          <div className="input-container">
-            <label>Descrição:</label>
-            <input
-              type="text"
-              value={form.descricaoProjeto}
-              onChange={(e) => handleChange("descricaoProjeto", e.target.value)}
-            />
-          </div>
-
-          <div className="input-container">
-            <label>Alunos:</label>
-            <input
-              type="text"
-              value={form.alunos}
-              onChange={(e) => handleChange("alunos", e.target.value)}
-            />
-          </div>
-
-          <div className="input-container">
-            <label>Email:</label>
-            <input
-              type="email"
-              value={form.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-            />
-          </div>
-
+          <h2>{form.id ? "Editar" : "Novo"} Projeto</h2>
+          {["tituloProjeto","descricaoProjeto","alunos","email"].map(field => (
+            <div key={field} className="input-container">
+              <label>{{
+                tituloProjeto:"Título",descricaoProjeto:"Descrição",
+                alunos:"Alunos", email:"Email"
+              }[field]}:</label>
+              <input
+                type={field==="email"?"email":"text"}
+                value={form[field] || ""}
+                onChange={e => change(field, e.target.value)}
+              />
+            </div>
+          ))}
           <div className="input-container">
             <label>Universidade:</label>
-            <select
-              value={form.universidadeId ?? ""}
-              onChange={(e) => handleChange("universidadeId", Number(e.target.value))}
-            >
+            <select value={form.universidadeId} onChange={e=>change("universidadeId",e.target.value)}>
               <option value="">Selecione</option>
-              {universidades.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.nome}
-                </option>
-              ))}
+              {listUni.map(u=> <option key={u.id} value={u.id}>{u.nome}</option>)}
             </select>
           </div>
-
           <div className="input-container">
             <label>Cidade:</label>
-            <select
-              value={form.cidadeId ?? ""}
-              onChange={(e) => handleChange("cidadeId", Number(e.target.value))}
-            >
+            <select value={form.cidadeId} onChange={e=>change("cidadeId",e.target.value)}>
               <option value="">Selecione</option>
-              {cidades.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome}
-                </option>
-              ))}
+              {listCid.map(c=> <option key={c.id} value={c.id}>{c.nome}</option>)}
             </select>
           </div>
         </section>
-
         <menu>
           <button type="button" onClick={onFechar}>Voltar</button>
-          <button type="button" onClick={handleSalvar}>Salvar</button>
+          <button type="button" onClick={salvar}>Salvar</button>
         </menu>
       </form>
     </dialog>
-  );
+  ) : null;
 }
-
-export default DialogProjetoPrivate;

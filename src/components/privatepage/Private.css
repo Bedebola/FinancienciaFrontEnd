@@ -1,7 +1,9 @@
+/* Travar scroll ao abrir dialog */
 body:has(dialog[open]) {
   overflow: hidden;
 }
 
+/* Página privada */
 .body-private {
   background-color: #f0f8ff;
   color: #0d1b2a;
@@ -12,6 +14,7 @@ body:has(dialog[open]) {
   box-sizing: border-box;
 }
 
+/* Header */
 header {
   width: 100%;
   background: linear-gradient(135deg, #b3e5fc, #e1f5fe);
@@ -29,7 +32,8 @@ header {
   flex-wrap: wrap;
 }
 
-.novo-projeto button {
+/* Botão: Novo Projeto */
+.btn-novo-projeto {
   padding: 12px 24px;
   background-color: #4fc3f7;
   color: #ffffff;
@@ -40,12 +44,13 @@ header {
   transition: 0.3s ease;
 }
 
-.novo-projeto button:hover {
+.btn-novo-projeto:hover {
   background-color: #81d4fa;
   transform: translateY(-4px);
   box-shadow: 0 6px 10px rgba(129, 212, 250, 0.3);
 }
 
+/* Área de busca */
 .buscar-area {
   display: flex;
   align-items: center;
@@ -69,7 +74,7 @@ header {
   box-shadow: 0 0 10px rgba(129, 212, 250, 0.5);
 }
 
-.buscar-area button {
+.btn-buscar {
   padding: 12px 24px;
   background-color: #4fc3f7;
   color: #ffffff;
@@ -80,10 +85,16 @@ header {
   transition: 0.3s ease;
 }
 
-.buscar-area button:hover {
+.btn-buscar:hover {
   background-color: #81d4fa;
   transform: translateY(-4px);
   box-shadow: 0 6px 10px rgba(129, 212, 250, 0.3);
+}
+
+/* Tabela */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .table {
@@ -99,13 +110,13 @@ header {
 
 .table thead {
   background: linear-gradient(135deg, #d0f0fd, #b3e5fc);
-  color: #0d1b2a;
   text-transform: uppercase;
   font-weight: bold;
   text-align: center;
 }
 
-.table th, .table td {
+.table th,
+.table td {
   padding: 16px;
   border-bottom: 1px solid #b3e5fc;
   text-align: left;
@@ -115,6 +126,7 @@ header {
   background-color: #f1fbff;
 }
 
+/* Botões de ação */
 .btn-editar,
 .btn-deletar {
   padding: 8px 16px;
@@ -122,6 +134,7 @@ header {
   border: none;
   border-radius: 20px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .btn-editar {
@@ -144,27 +157,124 @@ header {
   box-shadow: 0 4px 8px rgba(244, 67, 54, 0.4);
 }
 
-/* Dialog */
+/* Dialogs */
 dialog.dialog-centralizado {
   position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
+  inset: 0 !important;
+  margin: auto !important;
   z-index: 9999;
-  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
   border-radius: 20px;
   padding: 30px;
   width: 500px;
   max-width: 90vw;
-  border: none;
+  background-color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: auto;
 }
 
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(2px);
 }
 
-/* Responsivo */
+/* Formulários */
+.dialog-centralizado form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dialog-centralizado section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+}
+
+.dialog-centralizado h2 {
+  font-size: 24px;
+  color: #0d1b2a;
+}
+
+.dialog-centralizado p {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.input-container label {
+  font-weight: 600;
+  color: #0d1b2a;
+}
+
+.input-container input,
+.input-container select {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 2px solid #81d4fa;
+  background-color: #fff;
+  font-size: 14px;
+  color: #0d1b2a;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.input-container input:focus,
+.input-container select:focus {
+  border-color: #4fc3f7;
+  box-shadow: 0 0 8px rgba(79, 195, 247, 0.3);
+}
+
+/* Menu de botões do diálogo */
+.dialog-centralizado menu {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.dialog-centralizado menu button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-size: 14px;
+}
+
+.dialog-centralizado menu button:first-child {
+  background-color: #b0bec5;
+  color: #fff;
+}
+
+.dialog-centralizado menu button:first-child:hover {
+  background-color: #90a4ae;
+}
+
+.dialog-centralizado menu button:last-child {
+  background-color: #4fc3f7;
+  color: #fff;
+}
+
+.dialog-centralizado menu button:last-child:hover {
+  background-color: #81d4fa;
+  box-shadow: 0 4px 8px rgba(129, 212, 250, 0.4);
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
   .buscar-area {
     flex-direction: column;
@@ -186,5 +296,10 @@ dialog::backdrop {
   .novo-projeto {
     width: 100%;
     margin-bottom: 10px;
+  }
+
+  dialog.dialog-centralizado {
+    width: 90vw;
+    padding: 20px;
   }
 }

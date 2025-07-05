@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderPrivatePage from "./HeaderPrivatePage";
 import ProjetoTablePrivate from "./ProjetoTablePrivate";
@@ -11,103 +11,86 @@ function PrivatePage() {
   const [projetos, setProjetos] = useState([]);
   const [busca, setBusca] = useState("");
   const [projetoSelecionado, setProjetoSelecionado] = useState(null);
-  const [showDialogMensagem, setShowDialogMensagem] = useState(false);
-  const [mensagemInfo, setMensagemInfo] = useState({ titulo: "", mensagem: "" });
-  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
-  const [idParaExcluir, setIdParaExcluir] = useState(null);
 
+  const [showDialogMsg, setShowDialogMsg] = useState(false);
+  const [msgInfo, setMsgInfo] = useState({ titulo: "", texto: "" });
+
+  const [showConfirma, setShowConfirma] = useState(false);
+  const [idExcluir, setIdExcluir] = useState(null);
+
+  const refMsg = useRef();
+  const refConf = useRef();
   const navigate = useNavigate();
 
-  const axiosPublic = axios.create({
-    baseURL: "http://localhost:8080",
-  });
+  const apiPublic = axios.create({ baseURL: "http://localhost:8080" });
 
-  // Verifica se o usuário está autenticado
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-    }
+    if (!localStorage.getItem("token")) navigate("/login");
   }, [navigate]);
 
-  // Carrega projetos ao abrir a tela
   useEffect(() => {
     carregarProjetos();
   }, []);
 
   const carregarProjetos = () => {
-    axiosPublic
+    apiPublic
       .get("/projeto/listar")
-      .then((response) => setProjetos(response.data))
-      .catch((error) => {
-        console.error("Erro ao carregar projetos:", error);
-        if (error.response?.status === 403 || error.response?.status === 401) {
-          navigate("/login");
-        }
+      .then(res => setProjetos(res.data))
+      .catch(err => {
+        if ([401, 403].includes(err.response?.status)) navigate("/login");
       });
   };
 
   const buscarProjeto = () => {
-    axiosPublic
+    apiPublic
       .get("/projeto/buscar", { params: { tituloProjeto: busca } })
-      .then((response) => setProjetos(response.data))
-      .catch((error) => {
-        if (error.response?.status === 404) {
-          setMensagemInfo({ titulo: "Erro!", mensagem: "Projeto não encontrado." });
-          setShowDialogMensagem(true);
+      .then(res => setProjetos(res.data))
+      .catch(err => {
+        if (err.response?.status === 404) {
+          setMsgInfo({ titulo: "Erro", texto: "Projeto não encontrado." });
+          setShowDialogMsg(true);
+          refMsg.current.showModal();
           setProjetos([]);
-        } else {
-          console.error("Erro ao buscar projeto:", error);
         }
       });
   };
 
-  const abrirNovoProjeto = () => {
-    setProjetoSelecionado({
-      id: null,
-      tituloProjeto: "",
-      descricaoProjeto: "",
-      alunos: "",
-      email: "",
-      cidade: { id: null },         // correto: objeto com id
-      universidade: { id: null }    // correto: objeto com id
-    });
-  };
+  const abrirNovo = () => setProjetoSelecionado({ id: null });
 
-  const abrirEdicao = (projeto) => {
-    // Aqui o projeto já vem com cidade e universidade como objetos
-    setProjetoSelecionado(projeto);
-  };
+  const abrirEdicao = projeto => setProjetoSelecionado(projeto);
 
-  const fecharDialogProjeto = () => {
-    setProjetoSelecionado(null);
-  };
+  const fecharProjeto = () => setProjetoSelecionado(null);
 
-  const aoSalvarProjeto = () => {
+  const onProjetoSalvo = () => {
     carregarProjetos();
-    fecharDialogProjeto();
+    fecharProjeto();
   };
 
-  const confirmarDelete = (id) => {
-    setIdParaExcluir(id);
-    setConfirmarExclusao(true);
+  const confirmarDelete = id => {
+    setIdExcluir(id);
+    setShowConfirma(true);
+    refConf.current.showModal();
   };
 
   const deletarProjeto = () => {
+    if (!idExcluir) return;
     axiosComToken
-      .delete(`/projeto/excluir/${idParaExcluir}`)
+      .delete(`/projeto/excluir/${idExcluir}`)
       .then(() => {
-        setMensagemInfo({ titulo: "Sucesso!", mensagem: "Projeto deletado com sucesso!" });
-        setShowDialogMensagem(true);
+        setMsgInfo({ titulo: "Sucesso", texto: "Projeto excluído." });
+        setShowDialogMsg(true);
+        refMsg.current.showModal();
         carregarProjetos();
       })
       .catch(() => {
-        setMensagemInfo({ titulo: "Erro!", mensagem: "Erro ao deletar o projeto." });
-        setShowDialogMensagem(true);
+        setMsgInfo({ titulo: "Erro", texto: "Falha ao excluir." });
+        setShowDialogMsg(true);
+        refMsg.current.showModal();
       })
       .finally(() => {
-        setConfirmarExclusao(false);
-        setIdParaExcluir(null);
+        setShowConfirma(false);
+        setIdExcluir(null);
+        refConf.current.close();
       });
   };
 
@@ -117,7 +100,7 @@ function PrivatePage() {
         busca={busca}
         setBusca={setBusca}
         buscarProjeto={buscarProjeto}
-        abrirNovoProjeto={abrirNovoProjeto}
+        abrirNovoProjeto={abrirNovo}
       />
 
       <ProjetoTablePrivate
@@ -126,27 +109,34 @@ function PrivatePage() {
         onDeletar={confirmarDelete}
       />
 
-      {projetoSelecionado && (
-        <DialogProjetoPrivate
-          projeto={projetoSelecionado}
-          onFechar={fecharDialogProjeto}
-          onSalvo={aoSalvarProjeto}
-        />
-      )}
-
-      <DialogMensagemPrivate
-        aberto={showDialogMensagem}
-        titulo={mensagemInfo.titulo}
-        mensagem={mensagemInfo.mensagem}
-        onFechar={() => setShowDialogMensagem(false)}
+      <DialogProjetoPrivate
+        projeto={projetoSelecionado}
+        onFechar={fecharProjeto}
+        onSalvo={onProjetoSalvo}
       />
 
       <DialogMensagemPrivate
-        aberto={confirmarExclusao}
+        ref={refMsg}
+        aberto={showDialogMsg}
+        tipo="mensagem"
+        titulo={msgInfo.titulo}
+        mensagem={msgInfo.texto}
+        onFechar={() => {
+          setShowConfirma(false);
+          refConf.current.close();
+        }}
+      />
+
+       <DialogMensagemPrivate
+        ref={refConf}
+        aberto={showConfirma}
         tipo="confirmacao"
         titulo="Confirmação"
-        mensagem="Deseja realmente excluir o projeto?"
-        onFechar={() => setConfirmarExclusao(false)}
+        mensagem="Deseja excluir?"
+        onFechar={() => {
+          setShowConfirma(false);
+          refConf.current.close();
+        }}
         onConfirmar={deletarProjeto}
       />
     </div>

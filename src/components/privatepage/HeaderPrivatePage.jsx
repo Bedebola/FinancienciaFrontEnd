@@ -4,24 +4,39 @@ function HeaderPrivatePage({ busca, setBusca, buscarProjeto, abrirNovoProjeto })
   return (
     <header>
       <div className="header-actions">
-        {/* Botão de Novo Projeto à esquerda */}
+        {/* Botão de Novo Projeto */}
         <div className="novo-projeto">
-          <button onClick={abrirNovoProjeto}>
+          <button
+            onClick={abrirNovoProjeto}
+            type="button"
+            className="btn-novo-projeto"
+            aria-label="Criar um novo projeto"
+          >
             Novo Projeto
           </button>
         </div>
 
-        {/* Campo de busca à direita */}
+        {/* Área de busca */}
         <div className="buscar-area">
-          <label htmlFor="buscar">Buscar Projeto:</label>
+          <label htmlFor="campo-busca" style={{ display: "none" }}>
+            Buscar Projeto
+          </label>
           <input
             type="text"
-            id="buscar"
+            id="campo-busca"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             placeholder="Insira o título do Projeto"
+            aria-label="Campo de busca de projetos"
           />
-          <button onClick={buscarProjeto}>Buscar</button>
+          <button
+            type="button"
+            onClick={buscarProjeto}
+            className="btn-buscar"
+            aria-label="Buscar projeto"
+          >
+            Buscar
+          </button>
         </div>
       </div>
     </header>

@@ -1,40 +1,36 @@
-import React from "react";
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 
-function DialogMensagemPrivate({
-  aberto,
-  titulo,
-  mensagem,
-  tipo = "mensagem",
-  onFechar,
-  onConfirmar
-}) {
-  if (!aberto) return null;
+const DialogMensagemPrivate = forwardRef(({ aberto, titulo, mensagem, tipo="mensagem", onFechar, onConfirmar }, ref) => {
+  const dialogRef = useRef();
+
+  useImperativeHandle(ref, () => ({
+    showModal: () => dialogRef.current?.showModal(),
+    close: () => dialogRef.current?.close()
+  }));
+
+  useEffect(() => {
+    if (!dialogRef.current) return;
+    aberto ? dialogRef.current.showModal() : dialogRef.current.close();
+  }, [aberto]);
 
   return (
-    <dialog open>
+    <dialog ref={dialogRef} className="dialog-centralizado" onCancel={e => { e.preventDefault(); onFechar?.(); }}>
       <section>
         <h2>{titulo}</h2>
         <p>{mensagem}</p>
-
         <menu>
           {tipo === "confirmacao" ? (
             <>
-              <button type="button" onClick={onFechar}>
-                Cancelar
-              </button>
-              <button type="button" onClick={onConfirmar}>
-                Confirmar
-              </button>
+              <button onClick={onFechar} className="btn-cancelar">Cancelar</button>
+              <button onClick={onConfirmar} className="btn-confirmar">Confirmar</button>
             </>
           ) : (
-            <button type="button" onClick={onFechar}>
-              Ok!
-            </button>
+            <button onClick={onFechar} className="btn-confirmar">Ok!</button>
           )}
         </menu>
       </section>
     </dialog>
   );
-}
+});
 
 export default DialogMensagemPrivate;

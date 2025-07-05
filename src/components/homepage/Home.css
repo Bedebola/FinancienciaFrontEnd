@@ -20,6 +20,18 @@ body:has(dialog[open]) {
 }
 
 /* Header da home */
+.home-header {
+  background-color: #a9d5ff;
+  padding: 10px 20px;
+  border-radius: 0 0 10px 10px;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .home-wrapper header {
   width: 100%;
   background: linear-gradient(135deg, #b3e5fc, #e1f5fe);
@@ -151,7 +163,7 @@ body:has(dialog[open]) {
 }
 
 .home-wrapper .dialog-box input {
-  width: 80%;
+  width: 95%;
   padding: 10px;
   border: 2px solid #81d4fa;
   border-radius: 12px;

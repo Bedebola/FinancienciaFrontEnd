@@ -7,31 +7,46 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const disabled = email.trim() === "" || senha.trim() === "";
+  const disabled = email.trim() === "" || senha.trim() === "" || isLoading;
 
-  const acessar = () => {
-    axios
-      .post("http://localhost:8080/usuario/login", { email, senha })
-      .then((response) => {
-        const { token } = response.data;
-
-        if (token) {
-          localStorage.setItem("token", token); // Salva o token no localStorage
-          navigate("/private"); // Redireciona para rota privada
-        } else {
-          setShowDialog(true); // Falha de autenticação
-        }
-      })
-      .catch((error) => {
-        if (error.response?.status === 400) {
-          setShowDialog(true);
-        } else {
-          alert("Erro desconhecido (ver console)");
-          console.error(error);
-        }
+  const acessar = async () => {
+    if (disabled) return;
+    
+    setIsLoading(true);
+    
+    try {
+      const response = await axios.post("http://localhost:8080/usuario/login", { 
+        email, 
+        senha 
       });
+
+      const { token } = response.data;
+
+      if (token) {
+        localStorage.setItem("token", token);
+        navigate("/private");
+      } else {
+        setShowDialog(true);
+      }
+    } catch (error) {
+      if (error.response?.status === 400) {
+        setShowDialog(true);
+      } else {
+        console.error("Erro no login:", error);
+        alert("Erro ao conectar com o servidor. Tente novamente.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !disabled) {
+      acessar();
+    }
   };
 
   return (
@@ -49,6 +64,8 @@ function LoginForm() {
               placeholder="Digite seu usuário"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={handleKeyPress}
+              autoFocus
             />
           </div>
 
@@ -60,15 +77,27 @@ function LoginForm() {
               placeholder="Digite sua senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
           </div>
 
-          <button id="acessarButton" onClick={acessar} disabled={disabled}>
-            Entrar
+          <button 
+            id="acessarButton" 
+            onClick={acessar} 
+            disabled={disabled}
+          >
+            {isLoading ? "Carregando..." : "Entrar"}
           </button>
         </div>
 
-        {showDialog && <DialogMessage onClose={() => window.location.reload()} />}
+        {showDialog && (
+          <DialogMessage 
+            onClose={() => {
+              setShowDialog(false);
+              setSenha("");
+            }} 
+          />
+        )}
       </div>
     </div>
   );
