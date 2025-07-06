@@ -115,30 +115,45 @@ function PrivatePage() {
         onSalvo={onProjetoSalvo}
       />
 
-      <DialogMensagemPrivate
-        ref={refMsg}
-        aberto={showDialogMsg}
-        tipo="mensagem"
-        titulo={msgInfo.titulo}
-        mensagem={msgInfo.texto}
-        onFechar={() => {
-          setShowConfirma(false);
-          refConf.current.close();
-        }}
-      />
+      {
+        showDialogMsg ?
+        <DialogMensagemPrivate
+          ref={refMsg}
+          aberto={showDialogMsg}
+          tipo="mensagem"
+          titulo={msgInfo.titulo}
+          mensagem={msgInfo.texto}
+          onFechar={() => {
+            setShowDialogMsg(false);
+            refConf.current.close();
+          }}
+        />
+        :
+        <></>
 
-       <DialogMensagemPrivate
-        ref={refConf}
-        aberto={showConfirma}
-        tipo="confirmacao"
-        titulo="Confirmação"
-        mensagem="Deseja excluir?"
-        onFechar={() => {
-          setShowConfirma(false);
-          refConf.current.close();
-        }}
-        onConfirmar={deletarProjeto}
-      />
+      }
+
+
+      {
+        showConfirma ? 
+          <DialogMensagemPrivate
+            ref={refConf}
+            aberto={showConfirma}
+            tipo="confirmacao"
+            titulo="Confirmação"
+            mensagem="Deseja excluir?"
+            onFechar={() => {
+              console.log("onFechar", showConfirma)
+              setShowConfirma(false);
+              refConf.current.close();
+            }}
+            onConfirmar={deletarProjeto}
+          />
+          :
+            <></>
+      }
+
+       
     </div>
   );
 }
