@@ -19,7 +19,7 @@ function HomePage() {
   // Estados para paginação e busca
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchTerm, setSearchTerm] = useState(''); // NOVO: Estado para o termo de busca
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Efeito que busca os dados quando a página ou o termo de busca mudam
   useEffect(() => {
@@ -33,7 +33,7 @@ function HomePage() {
         if (searchTerm.trim() === '') {
           response = await projectService.listProjects(currentPage, 9);
           setProjects(response.data.content);
-          setTotalPages(response.data.totalPages);
+          setTotalPages(response.data.page.totalPages);
         } else {
           // Se há um termo de busca, chama o endpoint de busca
           response = await projectService.searchProjects(searchTerm);
@@ -77,12 +77,12 @@ function HomePage() {
         
         {/* Renderiza a paginação apenas se não houver termo de busca */}
         {!searchTerm && totalPages > 0 && (
-            <Pagination 
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-        )}
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
       </main>
       <Footer/>
     </div>

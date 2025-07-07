@@ -33,7 +33,7 @@ function AdministrationPage() {
             try {
                 const response = await projectService.listProjects(currentPage, 10);
                 setProjects(response.data.content);
-                setTotalPages(response.data.totalPages);
+                setTotalPages(response.data.page.totalPages);
             } catch (err) {
                 console.error("Erro ao buscar projetos:", err);
                 setError(err);
@@ -133,11 +133,14 @@ function AdministrationPage() {
                     </div>
                 )}
 
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
+                {totalPages > 0 && (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    )
+                }
             </main>
             
             {/* PASSO 2: MODAL AGORA USA O PROJECTFORM */}

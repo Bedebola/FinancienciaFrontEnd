@@ -8,7 +8,7 @@ import api from './api';
 
 const projectService = {
 
-  listProjects: (page = 0, size = 10) =>
+  listProjects: (page = 0, size = 9) =>
     api.get('/projeto/listar', {
       params: {
         page,
