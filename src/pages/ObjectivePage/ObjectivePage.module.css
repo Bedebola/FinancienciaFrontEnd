@@ -1,0 +1,19 @@
+.objectiveContainer {
+  padding: 40px 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.title {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.text {
+  color: #555;
+  font-size: 1.2rem;
+  line-height: 1.7;
+}
