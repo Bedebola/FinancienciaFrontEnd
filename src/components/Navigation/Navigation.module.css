@@ -1,0 +1,62 @@
+.footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 2rem;
+  width: 100%;
+  position: fixed; /* Alterado para fixed */
+  bottom: 0; /* Fixa no final da tela */
+  left: 0;
+  z-index: 100; /* Garante que fique acima de outros elementos */
+}
+
+/* Adicione esta classe nova para o conteúdo da página */
+.pageContainer {
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 120px; /* Ajuste conforme a altura do seu footer */
+}
+
+.navContainer {
+  background-color: #f8f9fa;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navList {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.navLink:hover {
+  color: #007bff;
+  background-color: #e9ecef;
+}
+
+.active {
+  color: #fff;
+  background-color: #007bff;
+}
+
+.active:hover {
+  background-color: #0056b3;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .navList {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

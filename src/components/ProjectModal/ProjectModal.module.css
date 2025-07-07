@@ -1,0 +1,156 @@
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Garante que o modal fique sobre todo o conteúdo */
+  padding: 20px;
+}
+
+.modalContent {
+  background: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+  color: #6c757d;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: #212529;
+}
+
+.modalTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 0.25rem;
+}
+
+.universityName {
+  font-size: 1rem;
+  font-style: italic;
+  color: #6c757d;
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.modalDescription {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #495057;
+  white-space: pre-wrap; /* Preserva quebras de linha e espaços */
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: #e9ecef;
+  margin: 2rem 0;
+}
+
+.contactTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #343a40;
+  margin-bottom: 0.5rem;
+}
+
+.contactSubtitle {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 10px;
+}
+
+.inputField {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.submitButton {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.submitButton:hover {
+  background-color: #0056b3;
+}
+
+.submitButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.errorMessage {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.successMessage {
+  text-align: center;
+  padding: 1rem;
+  background-color: #e6f9f0;
+  border: 1px solid #b6e9d1;
+  border-radius: 8px;
+  color: #1b6442;
+}
+.successMessage p {
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem;
+}
+.successMessage span {
+  font-size: 0.9rem;
+}
