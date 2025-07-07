@@ -17,13 +17,13 @@ function ProjectCard({ project }) {
 
   const { 
     tituloProjeto = 'Título não disponível', 
-    descricao = '',
+    descricaoProjeto = '',
     universidade = null 
   } = project;
 
-  const shortDescription = descricao.length > 100 
-    ? `${descricao.substring(0, 100)}...` 
-    : descricao;
+  const shortDescription = descricaoProjeto.length > 100 
+    ? `${descricaoProjeto.substring(0, 100)}...` 
+    : descricaoProjeto;
     
   // Funções para abrir e fechar o modal
   const handleOpenModal = () => setIsModalOpen(true);
